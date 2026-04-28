@@ -2,7 +2,7 @@ name: Update S&P 500 List
 
 on:
   schedule:
-    - cron: "0 5 * * 1"  # daily at 05:00 UTC
+    - cron: "0 5 * * 1"  # weekly (Monday 05:00 UTC)
   workflow_dispatch:
 
 jobs:
@@ -18,16 +18,19 @@ jobs:
         with:
           node-version: 20
 
-      - name: Install deps
+      - name: Install dependencies
         run: npm install axios cheerio
+
+      - name: Ensure data directory exists
+        run: mkdir -p data
 
       - name: Run pipeline
         run: node src/index.js
 
-      - name: Commit changes
-        run: |
-          git config --global user.name "bot"
-          git config --global user.email "bot@example.com"
-          git add data/*
-          git commit -m "Daily S&P 500 update" || echo "No changes"
-          git push
+      # 👇 THIS IS THE KEY PART
+      - name: Upload S&P 500 artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sp500-data
+          path: data/
+          retention-days: 30
