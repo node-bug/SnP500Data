@@ -2,7 +2,7 @@ name: Update S&P 500 List
 
 on:
   schedule:
-    - cron: "0 5 * * *"  # daily at 05:00 UTC
+    - cron: "0 5 * * 1"  # daily at 05:00 UTC
   workflow_dispatch:
 
 jobs:
